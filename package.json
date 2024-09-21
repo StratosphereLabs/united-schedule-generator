@@ -1,0 +1,23 @@
+{
+  "name": "united-schedule-generator-vite",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "format": "node_modules/.bin/prettier --config ./.prettierrc -w ./src",
+    "start": "vite-node src/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.5",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.1",
+    "vite-node": "^2.1.1"
+  },
+  "dependencies": {
+    "csv-parse": "^5.5.6",
+    "date-fns": "^4.1.0",
+    "inquirer": "^11.0.2",
+    "xlsx": "^0.18.5"
+  }
+}
