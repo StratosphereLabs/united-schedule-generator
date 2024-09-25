@@ -26,6 +26,13 @@ export const TIMESTAMP_FORMAT = 'yyyy-MM-dd HH:mm:ss';
 export const OUR_AIRPORTS_URL =
   'https://davidmegginson.github.io/ourairports-data/airports.csv';
 
+export const AIRLINE_IATA_ICAO_MAP: Record<string, string> = {
+  '4Y': 'OCN',
+  LH: 'DLH',
+  OS: 'AUA',
+  SN: 'SIA',
+};
+
 export const RAW_SCHEDULES_CSV_HEADER =
   'ID,Departure ID,Departure Code,Arrival ID,Arrival Code,Callsign,Flight Number,Fleets,Altitude,CI,Route,Departure Time,Arrival Time,Flight Length,Flight Distance,Start date,End date,Remarks,Type,Tag,Departure Stand Group,Arrival Stand Group,PAX LF,Luggage LF,Cargo (Weight) LF,Cargo (Volume) LF,Containers,Flightrules,Flighttype,Contpct,Resvrule,Taxifuel,Minfob,Minfod,Melfuel,atcfuel,wxxfuel,addedfuel,tankering,Minfob units,Minfod units,Melfuel units,Atc units,Wxx units,Addedfuel units,Tankering units,Addedfuel label,Delete\n';
 
