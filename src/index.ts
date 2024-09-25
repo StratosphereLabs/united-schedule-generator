@@ -12,7 +12,7 @@ import {
   WIDEBODY_SCHEDULES_PATH,
 } from './constants';
 import { createRawSchedules } from './createRawSchedules';
-import { getCsvFromWorksheet } from './utils';
+import { fetchGroupedAirportsData, getCsvFromWorksheet } from './utils';
 
 export const convertSchedules = (workbook: XLSX.WorkBook): void => {
   const widebodySheet = getCsvFromWorksheet(workbook.Sheets.Widebody);
@@ -34,6 +34,15 @@ export const cleanSchedules = (): void => {
 };
 
 (async () => {
+  console.log('Fetching airports data...');
+  const airportsData = await fetchGroupedAirportsData();
+  if (airportsData === null) {
+    console.log('  Unable to fetch airports data. Aborting...');
+    return;
+  } else {
+    console.log('  Done');
+  }
+
   const files = fs
     .readdirSync(OUTPUT_PATH)
     .filter(
@@ -61,6 +70,6 @@ export const cleanSchedules = (): void => {
   const data = fs.readFileSync(path.join(OUTPUT_PATH, result.file));
   const workbook = XLSX.read(data);
   convertSchedules(workbook);
-  createRawSchedules();
+  await createRawSchedules(airportsData);
   cleanSchedules();
 })();

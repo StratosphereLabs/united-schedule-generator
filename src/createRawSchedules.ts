@@ -1,17 +1,14 @@
+import { stringify } from 'csv-stringify/sync';
 import fs from 'fs';
 import {
-  COLON,
-  COMMA,
   JV_SCHEDULES_PATH,
   NARROWBODY_SCHEDULES_PATH,
-  NEWLINE,
   RAW_SCHEDULES_CSV_HEADER,
   RAW_SCHEDULES_PATH,
-  SPACE,
   UAX_SCHEDULES_PATH,
   WIDEBODY_SCHEDULES_PATH,
 } from './constants';
-import { getMonthTimestamps, readCSVFile } from './utils';
+import { readCSVFile } from './utils';
 import type { WriteCSVOptions } from './types';
 
 export const writeScheduleRows = ({
@@ -20,16 +17,19 @@ export const writeScheduleRows = ({
   getRowData,
   isRowValid,
 }: WriteCSVOptions<string[]>): void => {
-  const [month, year] = rows[0][0].split(COLON)[1].trim().split(SPACE);
-  const [begin, end] = getMonthTimestamps(month, year);
+  const scheduleRows = [];
   for (const [index, row] of rows.entries()) {
     if (isRowValid === undefined || isRowValid(row)) {
-      file.write([...getRowData(row, index), begin, end].join(COMMA) + NEWLINE);
+      const rowData = getRowData(row, index);
+      scheduleRows.push(rowData);
     }
   }
+  file.write(stringify(scheduleRows));
 };
 
-export const createRawSchedules = (): void => {
+export const createRawSchedules = async (
+  airportsData: Record<string, Record<string, string>>,
+): Promise<void> => {
   const csvFile = fs.createWriteStream(RAW_SCHEDULES_PATH);
 
   csvFile.write(RAW_SCHEDULES_CSV_HEADER);
@@ -40,14 +40,13 @@ export const createRawSchedules = (): void => {
     isRowValid: row =>
       row[0] !== 'Sales region' && row[1].length === 3 && row[2].length === 3,
     getRowData: row => [
-      row[1],
-      row[2],
-      'UA',
-      row[3].split(SPACE)[1],
-      row[6],
-      row[7],
-      row[4],
-      row[5],
+      '',
+      '',
+      airportsData[row[1]].ident,
+      '',
+      airportsData[row[2]].ident,
+      `UAL${row[3].split(' ')[1]}`,
+      row[3].split(' ')[1],
     ],
   });
 
@@ -57,14 +56,13 @@ export const createRawSchedules = (): void => {
     isRowValid: row =>
       row[2] !== 'Flight #' && row[0].length === 3 && row[1].length === 3,
     getRowData: row => [
-      row[0],
-      row[1],
-      'UA',
+      '',
+      '',
+      airportsData[row[0]].ident,
+      '',
+      airportsData[row[1]].ident,
+      `UAL${row[2]}`,
       row[2],
-      row[5],
-      row[6],
-      row[3],
-      row[4],
     ],
   });
 
@@ -74,14 +72,13 @@ export const createRawSchedules = (): void => {
     isRowValid: row =>
       row[2] !== 'Flight #' && row[0].length === 3 && row[1].length === 3,
     getRowData: row => [
-      row[0],
-      row[1],
-      'UA',
+      '',
+      '',
+      airportsData[row[0]].ident,
+      '',
+      airportsData[row[1]].ident,
+      `UAL${row[2]}`,
       row[2],
-      row[5],
-      row[6],
-      row[3],
-      row[4],
     ],
   });
 
@@ -91,14 +88,13 @@ export const createRawSchedules = (): void => {
     isRowValid: row =>
       row[0] !== 'Carrier' && row[1].length === 3 && row[2].length === 3,
     getRowData: row => [
-      row[1],
-      row[2],
-      row[0],
-      row[3].slice(2, row[3].length),
-      row[6],
-      row[7],
-      row[4],
-      row[5],
+      '',
+      '',
+      airportsData[row[1]].ident,
+      '',
+      airportsData[row[2]].ident,
+      `UAL${row[3].slice(2)}`,
+      row[3].slice(2),
     ],
   });
 
