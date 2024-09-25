@@ -7,12 +7,8 @@ export const SPACE = ' ';
 export const FILE_EXTENSION_XLS = '.xls';
 export const FILE_EXTENSION_XLSX = '.xlsx';
 
-export const OUTPUT_PATH = path.join('.', 'src');
+export const OUTPUT_PATH = path.join('.');
 
-export const RAW_SCHEDULES_PATH = path.join(
-  OUTPUT_PATH,
-  'raw_scheduled_flights.csv',
-);
 export const NARROWBODY_SCHEDULES_PATH = path.join(
   OUTPUT_PATH,
   'widebody_schedules.csv',

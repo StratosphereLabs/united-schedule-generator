@@ -7,13 +7,16 @@ import {
   JV_SCHEDULES_PATH,
   NARROWBODY_SCHEDULES_PATH,
   RAW_SCHEDULES_CSV_HEADER,
-  RAW_SCHEDULES_PATH,
   SPACE,
   TIMESTAMP_FORMAT,
   UAX_SCHEDULES_PATH,
   WIDEBODY_SCHEDULES_PATH,
 } from './constants';
-import { getMonthTimestamps, readCSVFile } from './utils';
+import {
+  getMonthTimestamps,
+  getSchedulesOutputPath,
+  readCSVFile,
+} from './utils';
 import type { WriteCSVOptions } from './types';
 
 export const writeScheduleRows = ({
@@ -22,12 +25,10 @@ export const writeScheduleRows = ({
   getRowData,
   isRowValid,
 }: WriteCSVOptions<string[]>): void => {
-  const [month, year] = rows[0][0].split(COLON)[1].trim().split(SPACE);
-  const [begin, end] = getMonthTimestamps(month, year);
   const scheduleRows = [];
   for (const row of rows.values()) {
     if (isRowValid === undefined || isRowValid(row)) {
-      const rowData = getRowData(row, begin, end);
+      const rowData = getRowData(row);
       if (rowData !== null) {
         scheduleRows.push(rowData);
       }
@@ -39,7 +40,16 @@ export const writeScheduleRows = ({
 export const createRawSchedules = async (
   airportsData: Record<string, Record<string, string>>,
 ): Promise<void> => {
-  const csvFile = fs.createWriteStream(RAW_SCHEDULES_PATH);
+  const widebodyScheduleRows = readCSVFile(WIDEBODY_SCHEDULES_PATH);
+  const [month, year] = widebodyScheduleRows[0][0]
+    .split(COLON)[1]
+    .trim()
+    .split(SPACE);
+  const [startDate, endDate] = getMonthTimestamps(month, year);
+
+  const csvFile = fs.createWriteStream(
+    getSchedulesOutputPath(`${month}_${year}`),
+  );
 
   csvFile.write(RAW_SCHEDULES_CSV_HEADER);
 
@@ -120,7 +130,7 @@ export const createRawSchedules = async (
     file: csvFile,
     isRowValid: row =>
       row[2] !== 'Flight #' && row[0].length === 3 && row[1].length === 3,
-    getRowData: (row, startDate, endDate) => [
+    getRowData: row => [
       '',
       '',
       airportsData[row[0]].ident,
@@ -177,7 +187,7 @@ export const createRawSchedules = async (
     file: csvFile,
     isRowValid: row =>
       row[2] !== 'Flight #' && row[0].length === 3 && row[1].length === 3,
-    getRowData: (row, startDate, endDate) => [
+    getRowData: row => [
       '',
       '',
       airportsData[row[0]].ident,
@@ -234,7 +244,7 @@ export const createRawSchedules = async (
     file: csvFile,
     isRowValid: row =>
       row[0] !== 'Carrier' && row[1].length === 3 && row[2].length === 3,
-    getRowData: (row, startDate, endDate) => [
+    getRowData: row => [
       '',
       '',
       airportsData[row[1]].ident,

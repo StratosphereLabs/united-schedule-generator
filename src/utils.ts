@@ -2,8 +2,20 @@ import axios from 'axios';
 import { parse as parseCSV } from 'csv-parse/sync';
 import { endOfMonth, format, parse } from 'date-fns';
 import fs from 'fs';
+import path from 'path';
 import * as XLSX from 'xlsx';
-import { MONTH_FORMAT, OUR_AIRPORTS_URL, TIMESTAMP_FORMAT } from './constants';
+import {
+  MONTH_FORMAT,
+  OUR_AIRPORTS_URL,
+  OUTPUT_PATH,
+  TIMESTAMP_FORMAT,
+} from './constants';
+
+export const getSchedulesOutputPath = (dateString: string) =>
+  path.join(
+    OUTPUT_PATH,
+    `united_schedules_vamsys_${dateString.toLowerCase()}.csv`,
+  );
 
 export const readCSVFile = (path: string): string[][] => {
   const file = fs.readFileSync(path);
