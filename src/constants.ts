@@ -1,5 +1,6 @@
 import path from 'path';
 
+export const COLON = ':';
 export const NEWLINE = '\n';
 export const SPACE = ' ';
 
@@ -31,3 +32,6 @@ export const OUR_AIRPORTS_URL =
 
 export const RAW_SCHEDULES_CSV_HEADER =
   'ID,Departure ID,Departure Code,Arrival ID,Arrival Code,Callsign,Flight Number,Fleets,Altitude,CI,Route,Departure Time,Arrival Time,Flight Length,Flight Distance,Start date,End date,Remarks,Type,Tag,Departure Stand Group,Arrival Stand Group,PAX LF,Luggage LF,Cargo (Weight) LF,Cargo (Volume) LF,Containers,Flightrules,Flighttype,Contpct,Resvrule,Taxifuel,Minfob,Minfod,Melfuel,atcfuel,wxxfuel,addedfuel,tankering,Minfob units,Minfod units,Melfuel units,Atc units,Wxx units,Addedfuel units,Tankering units,Addedfuel label,Delete\n';
+
+export const FLEET_STRING =
+  '7631, 7632, 7633, 7634, 7716, 7717, 7635, 7642, 7636, 7637, 7640, 7638, 7641, 7639, 7718, 7719, 7643, 7644, 7645, 7646, 7647, 7648, 7649, 7652, 7650, 7651, 7653, 7654, 7655, 7656, 7657, 7658, 10063';
