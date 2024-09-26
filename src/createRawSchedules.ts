@@ -1,4 +1,3 @@
-import { stringify } from 'csv-stringify/sync';
 import { endOfDay, format, parse, startOfDay } from 'date-fns';
 import fs from 'fs';
 import {
@@ -17,26 +16,8 @@ import {
   getMonthTimestamps,
   getSchedulesOutputPath,
   readCSVFile,
+  writeScheduleRows,
 } from './utils';
-import type { WriteCSVOptions } from './types';
-
-export const writeScheduleRows = ({
-  rows,
-  file,
-  getRowData,
-  isRowValid,
-}: WriteCSVOptions<string[]>): void => {
-  const scheduleRows = [];
-  for (const row of rows.values()) {
-    if (isRowValid === undefined || isRowValid(row)) {
-      const rowData = getRowData(row);
-      if (rowData !== null) {
-        scheduleRows.push(rowData);
-      }
-    }
-  }
-  file.write(stringify(scheduleRows));
-};
 
 export const createRawSchedules = async (
   airportsData: Record<string, Record<string, string>>,
@@ -72,9 +53,9 @@ export const createRawSchedules = async (
         return [
           '',
           '',
-          airportsData[row[1]].ident,
+          airportsData[row[1]].gps_code,
           '',
-          airportsData[row[2]].ident,
+          airportsData[row[2]].gps_code,
           `UAL${row[3].split(' ')[1]}`,
           `UA${row[3].split(' ')[1]}`,
           FLEET_STRING,
@@ -134,9 +115,9 @@ export const createRawSchedules = async (
     getRowData: row => [
       '',
       '',
-      airportsData[row[0]].ident,
+      airportsData[row[0]].gps_code,
       '',
-      airportsData[row[1]].ident,
+      airportsData[row[1]].gps_code,
       `UAL${row[2].replace(new RegExp(',', 'g'), '')}`,
       `UA${row[2].replace(new RegExp(',', 'g'), '')}`,
       FLEET_STRING,
@@ -191,9 +172,9 @@ export const createRawSchedules = async (
     getRowData: row => [
       '',
       '',
-      airportsData[row[0]].ident,
+      airportsData[row[0]].gps_code,
       '',
-      airportsData[row[1]].ident,
+      airportsData[row[1]].gps_code,
       `UAL${row[2].replace(new RegExp(',', 'g'), '')}`,
       `UA${row[2].replace(new RegExp(',', 'g'), '')}`,
       FLEET_STRING,
@@ -251,9 +232,9 @@ export const createRawSchedules = async (
       return [
         '',
         '',
-        airportsData[row[1]].ident,
+        airportsData[row[1]].gps_code,
         '',
-        airportsData[row[2]].ident,
+        airportsData[row[2]].gps_code,
         `${airlineIcao}${flightNumber}`,
         row[3],
         FLEET_STRING,

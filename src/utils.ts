@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { parse as parseCSV } from 'csv-parse/sync';
+import { stringify } from 'csv-stringify/sync';
 import { endOfMonth, format, parse } from 'date-fns';
 import fs from 'fs';
 import path from 'path';
@@ -10,6 +11,7 @@ import {
   OUTPUT_PATH,
   TIMESTAMP_FORMAT,
 } from './constants';
+import type { WriteCSVOptions } from './types';
 
 export const getSchedulesOutputPath = (dateString: string) =>
   path.join(
@@ -63,7 +65,7 @@ export const fetchGroupedAirportsData = async (): Promise<Record<
     return airportRows
       .slice(1)
       .reduce<Record<string, Record<string, string>>>((acc, row) => {
-        if (row[13].length === 0 || row[11] !== 'yes') {
+        if (row[13].length !== 3 || row[12].length !== 4 || row[11] !== 'yes') {
           return acc;
         }
         return { ...acc, [row[13]]: mergeKeysAndValues(headers, row) };
@@ -72,4 +74,22 @@ export const fetchGroupedAirportsData = async (): Promise<Record<
     console.log(err);
     return null;
   }
+};
+
+export const writeScheduleRows = ({
+  rows,
+  file,
+  getRowData,
+  isRowValid,
+}: WriteCSVOptions<string[]>): void => {
+  const scheduleRows = [];
+  for (const row of rows.values()) {
+    if (isRowValid === undefined || isRowValid(row)) {
+      const rowData = getRowData(row);
+      if (rowData !== null) {
+        scheduleRows.push(rowData);
+      }
+    }
+  }
+  file.write(stringify(scheduleRows));
 };
